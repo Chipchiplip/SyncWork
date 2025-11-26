@@ -1,0 +1,10 @@
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
+.vscode/
+*.db
+wwwroot/uploads/
+

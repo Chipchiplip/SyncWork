@@ -1,0 +1,60 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+.vs/
+.vscode/
+*.csproj.user
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+publish/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# App Settings (may contain secrets)
+backend/appsettings.json
+backend/appsettings.*.json
+!backend/appsettings.Development.json
+!backend/appsettings.example.json
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Uploads
+wwwroot/uploads/
+backend/wwwroot/uploads/
+
