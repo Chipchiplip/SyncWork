@@ -1,4 +1,5 @@
 using TaskManager.DTOs;
+using TaskManager.Models;
 
 namespace TaskManager.Interfaces;
 

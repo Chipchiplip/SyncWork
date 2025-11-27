@@ -4,6 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TaskManager.Data;
 using TaskManager.Hubs;
+using TaskManager.Interfaces;
+using TaskManager.Repositories;
+using TaskManager.Services;
+using TaskManager.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +18,10 @@ builder.Services.AddSwaggerGen();
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 // Redis (for caching)
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -39,7 +46,7 @@ builder.Services.AddCors(options =>
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"];
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -93,17 +100,19 @@ builder.Services.AddScoped<IAutomationRuleService, AutomationRuleService>();
 // AutoMapper (optional, for DTO mapping)
 builder.Services.AddAutoMapper(typeof(Program));
 
+// Helpers
+builder.Services.AddScoped<TaskManager.Helpers.JwtHelper>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Configure the HTTP request pipeline
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
+app.UseStaticFiles(); // For serving uploaded files
 app.UseAuthentication();
 app.UseAuthorization();
 

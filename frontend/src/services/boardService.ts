@@ -19,6 +19,8 @@ export const boardService = {
     return response.data
   },
 
+
+
   async updateBoard(boardId: string, data: Partial<Board>) {
     const response = await api.patch(`/boards/${boardId}`, data)
     return response.data

@@ -51,6 +51,27 @@ Project/
 └── EXCEL_IMPORT_TEMPLATE.md # Excel Import Guide
 ```
 
+## 🚀 Quick Start
+
+Xem file **SETUP_GUIDE.md** để biết hướng dẫn chi tiết setup và khởi chạy dự án.
+
+### Tóm tắt nhanh:
+
+**Backend:**
+```bash
+cd backend
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+dotnet run
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
 ## 🚀 Setup & Installation
 
 ### Prerequisites

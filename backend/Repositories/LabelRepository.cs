@@ -7,7 +7,7 @@ namespace TaskManager.Repositories;
 
 public class LabelRepository : BaseRepository<Label>, ILabelRepository
 {
-    private readonly ApplicationDbContext _context;
+    private new readonly ApplicationDbContext _context;
 
     public LabelRepository(ApplicationDbContext context) : base(context)
     {
