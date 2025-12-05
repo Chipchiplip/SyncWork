@@ -71,7 +71,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.HasOne(e => e.Board)
-                  .WithMany()
+                  .WithMany(b => b.Lists)
                   .HasForeignKey(e => e.BoardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => new { e.BoardId, e.Position });
@@ -83,11 +83,11 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(500);
             entity.HasOne(e => e.List)
-                  .WithMany()
+                  .WithMany(l => l.Cards)
                   .HasForeignKey(e => e.ListId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Board)
-                  .WithMany()
+                  .WithMany() // Board does not have Cards collection
                   .HasForeignKey(e => e.BoardId)
                   .OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(e => e.Assignee)
@@ -103,7 +103,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(500);
             entity.HasOne(e => e.Card)
-                  .WithMany()
+                  .WithMany(c => c.ChecklistItems)
                   .HasForeignKey(e => e.CardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => new { e.CardId, e.Position });
@@ -115,7 +115,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.HasOne(e => e.Board)
-                  .WithMany()
+                  .WithMany(b => b.Labels)
                   .HasForeignKey(e => e.BoardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => new { e.BoardId, e.Name }).IsUnique();
@@ -126,11 +126,11 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => new { e.CardId, e.LabelId });
             entity.HasOne(e => e.Card)
-                  .WithMany()
+                  .WithMany(c => c.CardLabels)
                   .HasForeignKey(e => e.CardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Label)
-                  .WithMany()
+                  .WithMany(l => l.CardLabels)
                   .HasForeignKey(e => e.LabelId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
@@ -141,7 +141,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Content).IsRequired();
             entity.HasOne(e => e.Card)
-                  .WithMany()
+                  .WithMany(c => c.Comments)
                   .HasForeignKey(e => e.CardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Author)
@@ -157,7 +157,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
             entity.Property(e => e.Url).IsRequired().HasMaxLength(1000);
             entity.HasOne(e => e.Card)
-                  .WithMany()
+                  .WithMany(c => c.Attachments)
                   .HasForeignKey(e => e.CardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.UploadedBy)
@@ -173,7 +173,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Type).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).IsRequired();
             entity.HasOne(e => e.Board)
-                  .WithMany()
+                  .WithMany(b => b.ActivityLogs)
                   .HasForeignKey(e => e.BoardId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.User)
@@ -188,7 +188,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.HasOne(e => e.Board)
-                  .WithMany()
+                  .WithMany(b => b.AutomationRules)
                   .HasForeignKey(e => e.BoardId)
                   .OnDelete(DeleteBehavior.Cascade);
         });

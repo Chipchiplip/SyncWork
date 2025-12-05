@@ -9,6 +9,7 @@ public interface ICardService
     Task<CardResponseDto> UpdateCardAsync(Guid cardId, Guid userId, UpdateCardDto dto);
     Task DeleteCardAsync(Guid cardId, Guid userId);
     Task<CardResponseDto> MoveCardAsync(Guid cardId, Guid userId, MoveCardDto dto);
+    Task<CardResponseDto> CopyCardAsync(Guid cardId, Guid userId, CopyCardDto dto);
     Task<CardResponseDto> UpdateCardStatusAsync(Guid cardId, Guid userId, string status);
     Task<CardResponseDto> ApproveCardAsync(Guid cardId, Guid userId, string? comment);
     Task<CardResponseDto> RejectCardAsync(Guid cardId, Guid userId, string reason);

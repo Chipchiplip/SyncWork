@@ -154,6 +154,36 @@ public class CardsController : ControllerBase
         }
     }
 
+    [HttpPost("cards/{cardId}/copy")]
+    public async Task<IActionResult> CopyCard(Guid cardId, [FromBody] CopyCardDto dto)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null) return Unauthorized();
+
+            var card = await _cardService.CopyCardAsync(cardId, userId.Value, dto);
+            return Ok(card);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Error = "Invalid request", Message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error copying card");
+            return BadRequest(new { Error = "Failed to copy card", Message = ex.Message });
+        }
+    }
+
     [HttpPatch("cards/{cardId}/status")]
     public async Task<IActionResult> UpdateCardStatus(Guid cardId, [FromBody] UpdateCardStatusDto dto)
     {

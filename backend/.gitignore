@@ -8,3 +8,6 @@ obj/
 *.db
 wwwroot/uploads/
 
+
+appsettings.json
+appsettings.Development.json

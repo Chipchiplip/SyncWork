@@ -5,6 +5,7 @@ public class ChecklistProgressResponseDto
     public int Total { get; set; }
     public int Completed { get; set; }
     public double Percentage { get; set; }
+    public List<ChecklistItemResponseDto> Items { get; set; } = new List<ChecklistItemResponseDto>();
 }
 
 public class LabelResponseDto
@@ -60,7 +61,7 @@ public class ChecklistItemResponseDto
 {
     public Guid Id { get; set; }
     public Guid CardId { get; set; }
-    public string Title { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
     public bool IsCompleted { get; set; }
     public int Position { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -69,13 +70,13 @@ public class ChecklistItemResponseDto
 
 public class CreateChecklistItemDto
 {
-    public string Title { get; set; } = string.Empty;
-    public int Position { get; set; }
+    public string Text { get; set; } = string.Empty;
+    public int? Position { get; set; }
 }
 
 public class UpdateChecklistItemDto
 {
-    public string? Title { get; set; }
+    public string? Text { get; set; }
     public int? Position { get; set; }
 }
 

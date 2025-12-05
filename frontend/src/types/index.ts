@@ -51,7 +51,7 @@ export interface Card {
   position: number
   status: 'todo' | 'inProgress' | 'waitingForApproval' | 'done' | 'rejected'
   dueDate?: string
-  assignee?: User
+  assignees: User[]
   priority: 'low' | 'medium' | 'high'
   labels: Label[]
   checklistProgress: ChecklistProgress
@@ -148,3 +148,62 @@ export interface AutomationRule {
   updatedAt: string
 }
 
+
+// DTOs for API Requests
+export interface CreateCardDto {
+  title: string
+  description?: string
+  position: number
+  dueDate?: string
+  assigneeId?: string
+  priority?: 'low' | 'medium' | 'high'
+  labelIds?: string[]
+}
+
+export interface UpdateCardDto {
+  title?: string
+  description?: string
+  dueDate?: string
+  assigneeId?: string | null
+  priority?: 'low' | 'medium' | 'high'
+  position?: number
+}
+
+export interface MoveCardDto {
+  listId: string
+  position: number
+}
+
+export interface CreateListDto {
+  name: string
+  position: number
+}
+
+// SignalR Event Types
+export interface SignalREvent<T = any> {
+  type: string
+  payload: T
+}
+
+export interface CardCreatedEvent {
+  listId: string
+}
+
+export interface CardUpdatedEvent {
+  cardId: string
+  listId: string
+}
+
+export interface CardMovedEvent {
+  cardId: string
+  fromListId: string
+  toListId: string
+}
+
+export interface ListCreatedEvent {
+  boardId: string
+}
+
+export interface CommentAddedEvent {
+  cardId: string
+}

@@ -155,6 +155,12 @@ public class CardService : ICardService
             card.Priority = dto.Priority;
         }
 
+        if (!string.IsNullOrEmpty(dto.Status) && dto.Status != card.Status)
+        {
+            changes.Add($"status: '{card.Status}' → '{dto.Status}'");
+            card.Status = dto.Status;
+        }
+
         if (dto.Position.HasValue && dto.Position != card.Position)
         {
             card.Position = dto.Position.Value;
@@ -235,6 +241,70 @@ public class CardService : ICardService
         );
 
         return await GetCardByIdAsync(cardId, userId);
+    }
+
+    public async Task<CardResponseDto> CopyCardAsync(Guid cardId, Guid userId, CopyCardDto dto)
+    {
+        var sourceCard = await _cardRepository.GetByIdAsync(cardId);
+        if (sourceCard == null)
+            throw new KeyNotFoundException("Card not found");
+
+        // Check if user is board member
+        var member = await _boardRepository.GetBoardMemberAsync(sourceCard.BoardId, userId);
+        if (member == null)
+            throw new UnauthorizedAccessException("You are not a member of this board");
+
+        var targetList = await _listRepository.GetByIdAsync(dto.ListId);
+        if (targetList == null)
+            throw new KeyNotFoundException("Target list not found");
+
+        if (targetList.BoardId != sourceCard.BoardId)
+            throw new ArgumentException("Cannot copy card to list in different board");
+
+        // Create new card as a copy
+        var newCard = new Card
+        {
+            Id = Guid.NewGuid(),
+            ListId = dto.ListId,
+            BoardId = sourceCard.BoardId,
+            Title = dto.Title ?? $"{sourceCard.Title} (Copy)",
+            Description = sourceCard.Description,
+            Position = dto.Position,
+            Status = "todo", // Reset status to todo
+            DueDate = sourceCard.DueDate,
+            AssigneeId = sourceCard.AssigneeId,
+            Priority = sourceCard.Priority,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        await _cardRepository.AddAsync(newCard);
+
+        // Copy labels
+        var labels = await _labelRepository.GetCardLabelsAsync(sourceCard.Id);
+        foreach (var label in labels)
+        {
+            try
+            {
+                await _labelRepository.AddLabelToCardAsync(newCard.Id, label.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to add label {LabelId} to copied card {CardId}", label.Id, newCard.Id);
+            }
+        }
+
+        // Log activity
+        await _activityLogService.LogActivityAsync(
+            newCard.BoardId,
+            newCard.Id,
+            userId,
+            "copy_card",
+            $"Copied card '{sourceCard.Title}' to '{targetList.Name}' as '{newCard.Title}'",
+            new { sourceCardId = sourceCard.Id, targetList = targetList.Name }
+        );
+
+        return await GetCardByIdAsync(newCard.Id, userId);
     }
 
     public async Task<CardResponseDto> UpdateCardStatusAsync(Guid cardId, Guid userId, string status)

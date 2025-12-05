@@ -29,7 +29,7 @@ public class ListsController : ControllerBase
             if (userId == null) return Unauthorized();
 
             var list = await _listService.CreateListAsync(boardId, userId.Value, dto);
-            return CreatedAtAction(nameof(GetList), new { listId = list.Id }, list);
+            return CreatedAtAction(nameof(GetList), new { boardId = boardId, listId = list.Id }, list);
         }
         catch (UnauthorizedAccessException)
         {
@@ -64,7 +64,7 @@ public class ListsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting list");
-            return StatusCode(500, new { Error = "Internal server error" });
+            return StatusCode(500, new { Error = "Internal server error", Message = ex.Message, StackTrace = ex.StackTrace });
         }
     }
 
@@ -86,7 +86,7 @@ public class ListsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting lists");
-            return StatusCode(500, new { Error = "Internal server error" });
+            return StatusCode(500, new { Error = "Internal server error", Message = ex.Message, StackTrace = ex.StackTrace });
         }
     }
 

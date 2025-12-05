@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { authService } from '../services/authService'
@@ -6,6 +6,8 @@ import { authService } from '../services/authService'
 function LoginPage() {
   const { setAuth, isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
+
+  const callbackHandled = useRef(false)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -19,7 +21,8 @@ function LoginPage() {
     const code = urlParams.get('code')
     const state = urlParams.get('state')
 
-    if (code) {
+    if (code && !callbackHandled.current) {
+      callbackHandled.current = true
       handleGoogleCallback(code, state || undefined)
     }
   }, [])

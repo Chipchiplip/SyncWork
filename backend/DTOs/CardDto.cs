@@ -38,6 +38,7 @@ public class UpdateCardDto
     public string? DueDate { get; set; }
     public Guid? AssigneeId { get; set; }
     public string? Priority { get; set; }
+    public string? Status { get; set; }
     public int? Position { get; set; }
 }
 
@@ -45,6 +46,13 @@ public class MoveCardDto
 {
     public Guid ListId { get; set; }
     public int Position { get; set; }
+}
+
+public class CopyCardDto
+{
+    public Guid ListId { get; set; }
+    public int Position { get; set; }
+    public string? Title { get; set; }
 }
 
 public class CardListResponseDto

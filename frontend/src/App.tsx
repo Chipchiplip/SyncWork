@@ -3,6 +3,7 @@ import { useAuthStore } from './store/authStore'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import BoardPage from './pages/BoardPage'
+import ProfilePage from './pages/ProfilePage'
 import Layout from './components/Layout'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       >
         <Route index element={<DashboardPage />} />
         <Route path="boards/:boardId" element={<BoardPage />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
   )

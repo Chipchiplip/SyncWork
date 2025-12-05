@@ -82,7 +82,9 @@ public class AuthService : IAuthService
 
             if (!tokenResponse.IsSuccessStatusCode)
             {
-                throw new Exception("Failed to exchange code for token");
+                var errorContent = await tokenResponse.Content.ReadAsStringAsync();
+                _logger.LogError($"Failed to exchange code for token. Status: {tokenResponse.StatusCode}, Content: {errorContent}");
+                throw new Exception($"Failed to exchange code for token: {tokenResponse.StatusCode}");
             }
 
             var tokenContent = await tokenResponse.Content.ReadAsStringAsync();
@@ -101,14 +103,21 @@ public class AuthService : IAuthService
 
             if (!userInfoResponse.IsSuccessStatusCode)
             {
+                var errorContent = await userInfoResponse.Content.ReadAsStringAsync();
+                _logger.LogError($"Failed to get user info from Google. Status: {userInfoResponse.StatusCode}, Content: {errorContent}");
                 throw new Exception("Failed to get user info from Google");
             }
 
             var userInfoContent = await userInfoResponse.Content.ReadAsStringAsync();
-            var userInfo = System.Text.Json.JsonSerializer.Deserialize<GoogleUserInfo>(userInfoContent);
+            var jsonOptions = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var userInfo = System.Text.Json.JsonSerializer.Deserialize<GoogleUserInfo>(userInfoContent, jsonOptions);
 
             if (userInfo == null || string.IsNullOrEmpty(userInfo.Id))
             {
+                _logger.LogError($"Invalid user info from Google. Content: {userInfoContent}");
                 throw new Exception("Invalid user info from Google");
             }
 

@@ -17,8 +17,11 @@ export const commentService = {
     return response.data
   },
 
-  async updateComment(cardId: string, commentId: string, content: string) {
-    const response = await api.patch(`/cards/${cardId}/comments/${commentId}`, { content })
+  async updateComment(cardId: string, commentId: string, content: string, mentions?: string[]) {
+    const response = await api.patch(`/cards/${cardId}/comments/${commentId}`, {
+      content,
+      mentions
+    })
     return response.data
   },
 
